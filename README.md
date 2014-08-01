@@ -1,0 +1,1 @@
+# Plugin for SAML 2.0 authentication in CAS
