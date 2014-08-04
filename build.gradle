@@ -1,3 +1,36 @@
+apply plugin: 'groovy'
+
+buildscript {
+    repositories {
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+    }
+}
+
+configure(allprojects) {
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-eclipse'
+}
+
+repositories {
+    jcenter()
+    maven {
+        url "http://maven.springframework.org/milestone/"
+        artifactUrls "http://maven.springframework.org/snapshot/"
+    }
+}
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:${project."groovy.version"}"
+    compile "org.springframework.security.extensions:spring-security-saml2-core:${project."spring-security-saml.version"}"
+    provided "org.jasig.cas:cas-server-core:${project."cas.version"}"
+    provided "javax.servlet:servlet-api:2.5"
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = "2.0"
 }
