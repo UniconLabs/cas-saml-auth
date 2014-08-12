@@ -27,8 +27,6 @@ class SamlCredentialAdaptingAction {
 
     static final String CREDENTIALS_KEY = "samlCredentials"
 
-    PersonService personService
-
     public void wrapSamlCredentialAndPlaceInFlowScope(RequestContext context) {
         final def sessionMap = context.externalContext.sessionMap
         try {
@@ -38,10 +36,7 @@ class SamlCredentialAdaptingAction {
             final def sc = sessionMap.get(SPRING_SECURITY_CONTEXT_KEY) as SecurityContext
             context.flowScope.put(
                     CREDENTIALS_KEY,
-                    new SpringSecuritySamlCredentials(sc.authentication.credentials as SAMLCredential).with {
-                        samlGroup = personService.getGroup(context.flowScope.get(LoginTypeDiscoveryAction.CUSTOMER_GROUP_ID_KEY))
-                        it
-                    }
+                    new SpringSecuritySamlCredentials(sc.authentication.credentials as SAMLCredential)
             )
         }
         finally {

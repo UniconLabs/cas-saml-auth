@@ -2,7 +2,7 @@ package org.jasig.cas.authentication.saml
 
 import groovy.transform.EqualsAndHashCode
 import org.jasig.cas.authentication.principal.Credentials
-import org.jasig.cas.domain.SamlGroup
+
 import org.springframework.security.saml.SAMLCredential
 
 /**
@@ -14,20 +14,14 @@ import org.springframework.security.saml.SAMLCredential
  */
 @EqualsAndHashCode
 class SpringSecuritySamlCredentials implements Credentials {
-
-    private final SAMLCredential samlCredential
-
-    SamlGroup samlGroup
+    final SAMLCredential samlCredential
 
     SpringSecuritySamlCredentials(SAMLCredential samlCredential) {
         this.samlCredential = samlCredential
     }
 
     String getSamlPrincipalId() {
-        if (!this.samlCredential || !this.samlGroup) {
-            // if one of these is null, return null
-            return null
-        }
+        Idp = idp
         return (this.samlCredential.getAttributeByName(this.samlGroup.externalIdAttribute) ?: this.samlCredential.attributes.find {
             it.friendlyName == this.samlGroup.externalIdAttribute
         })?.DOM?.textContent

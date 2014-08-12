@@ -1,5 +1,6 @@
 package org.jasig.cas.web.flow
 
+import groovy.xml.MarkupBuilder
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -31,8 +32,26 @@ class LoginFlowResumingController {
 
     @RequestMapping(method = RequestMethod.GET)
     public void resumeLoginFlow(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+        /*
         request.setAttribute(FlowExecutionUrlSavingAction.BASE_FLOW_EXECUTION_KEY, session.getAttribute(FlowExecutionUrlSavingAction.BASE_FLOW_EXECUTION_KEY))
         session.removeAttribute(FlowExecutionUrlSavingAction.BASE_FLOW_EXECUTION_KEY)
-        request.getRequestDispatcher("/WEB-INF/jsp/webflowContinue.jsp").forward(request, response)
+         */
+
+        def builder = new MarkupBuilder(response.writer)
+        builder.html {
+            body(onLoad: "document.forms[0].submit();") {
+                form (action: "login", method: "post") {
+                    input type: "hidden", name: "_eventId", value: "idpAuthnFinished"
+                    input type: "hidden", name: "execution", value: session.getAttribute(FlowExecutionUrlSavingAction.BASE_FLOW_EXECUTION_KEY)
+                    noscript {
+                        p "Your browser has javascript disabled. Press continue button"
+                        input (type: "submit", value: "Continue")
+                    }
+                }
+            }
+        }
+        session.removeAttribute(FlowExecutionUrlSavingAction.BASE_FLOW_EXECUTION_KEY)
+
+        // request.getRequestDispatcher("/WEB-INF/jsp/pieman.jsp").forward(request, response)
     }
 }

@@ -1,4 +1,7 @@
 apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply from: 'http://tellurianring.com/projects/gradle-plugins/gradle-release/apply.groovy'
 
 buildscript {
     repositories {
@@ -7,6 +10,10 @@ buildscript {
     dependencies {
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
     }
+}
+
+configurations {
+    deployerJar
 }
 
 configure(allprojects) {
@@ -27,10 +34,85 @@ repositories {
 dependencies {
     compile "org.codehaus.groovy:groovy-all:${project."groovy.version"}"
     compile "org.springframework.security.extensions:spring-security-saml2-core:${project."spring-security-saml.version"}"
+    compile "org.springframework.security:spring-security-cas:${project."spring-security.version"}"
+
     provided "org.jasig.cas:cas-server-core:${project."cas.version"}"
     provided "javax.servlet:servlet-api:2.5"
+
+    deployerJar "ar.com.synergian:wagon-git:0.2.0"
+}
+
+javadoc {
+    classpath = configurations.compile + configurations.provided
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = "sources"
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = "2.0"
 }
+
+
+createReleaseTag.dependsOn uploadArchives
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment)}
+            configuration = configurations.deployerJar
+            repository(url: "https://api.bintray.com/maven/uniconiam/maven/cas-surrogate-principal") {
+                authentication(userName: bintrayUsername, password: bintrayAPIKey)
+            }
+            snapshotRepository(url: "git:snapshots://git@bitbucket.org:scalding/maven-repo.git") {
+                authentication(userName: githubUsername, password: githubPassword)
+            }
+            pom.project {
+                name "CAS SAML Authentication"
+                packaging "jar"
+                description "An Apereo CAS authentication module to allow SAML front channel authentication."
+                url "https://bitbucket.org/unicon/cas-saml-auth"
+
+                scm {
+                    url "scm:git@bitbucket.org:unicon/cas-saml-auth.git"
+                    connection "scm:git@bitbucket.org:unicon/cas-saml-auth.git"
+                    developerConnection "scm:git@bitbucket.org:unicon/cas-saml-auth.git"
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'scalding'
+                        name 'Jonathan Johnson'
+                    }
+                }
+            }
+        }
+    }
+}
+

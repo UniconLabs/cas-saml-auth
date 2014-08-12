@@ -15,9 +15,6 @@ import org.slf4j.LoggerFactory
  * @author Unicon, inc.
  */
 class SpringSecuritySamlAuthenticationHandler implements NamedAuthenticationHandler {
-    PersonService personService
-    private static final Logger logger = LoggerFactory.getLogger(SpringSecuritySamlAuthenticationHandler)
-
     @Override
     String getName() {
         this.class.name
@@ -25,14 +22,6 @@ class SpringSecuritySamlAuthenticationHandler implements NamedAuthenticationHand
 
     @Override
     boolean authenticate(Credentials credentials) throws AuthenticationException {
-        def username = ((SpringSecuritySamlCredentials)credentials).samlPrincipalId
-        if (!username) {
-            return false
-        }
-        if (!personService.findPersonByExternalIdAndGroup(username, ((SpringSecuritySamlCredentials)credentials).samlGroup)) {
-            logger.info(String.format("User %s not found, authentication failed", username));
-            return false
-        }
         return true
     }
 

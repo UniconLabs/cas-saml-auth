@@ -1,0 +1,43 @@
+package org.jasig.cas.service
+
+import groovy.json.JsonSlurper
+import org.jasig.cas.authentication.saml.SpringSecuritySamlCredentials
+import org.jasig.cas.domain.Idp
+import org.springframework.core.io.Resource
+
+import javax.annotation.PostConstruct
+
+class SimpleJsonIdpService implements IdpService {
+    Resource idpFile
+    Set<Idp> idps = [] as Set
+
+    @PostConstruct
+    void setup() {
+        assert idpFile, "idpFile cannot be null"
+
+        def json = new JsonSlurper().parse(idpFile.file)
+        json.each { item ->
+            idps.add(new Idp(item))
+        }
+    }
+
+    @Override
+    Idp getIdp(String code) {
+        return null
+    }
+
+    @Override
+    Idp getIdpByEntityId(String entityId) {
+        idps.find {it.entityId = entityId}
+    }
+
+    @Override
+    String extractPrincipalId(SpringSecuritySamlCredentials springSecuritySamlCredentials) {
+        def samlCredential = springSecuritySamlCredentials.samlCredential
+        def idp = getIdpByEntityId(samlCredential.remoteEntityID)
+        def idAttribute = idp.principalAttribute ?: "principal"
+        return (samlCredential.getAttributeByName(idAttribute) ?: samlCredential.attributes.find {
+            it.friendlyName == idAttribute
+        })?.DOM?.textContent
+    }
+}

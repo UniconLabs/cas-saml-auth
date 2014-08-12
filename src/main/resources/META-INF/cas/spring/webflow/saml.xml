@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    <view-state id="authenticateWithIDP"
+                view="externalRedirect:contextRelative:/saml/login/alias/cas?idp=${requestScope.idpId}">
+        <on-render>
+            <evaluate expression="saveFlowExecutionUrl"/>
+        </on-render>
+        <transition on="idpAuthnFinished" to="authenticateExternalSamlPrincipal">
+            <evaluate
+                    expression="samlCredentialAdaptingAction.wrapSamlCredentialAndPlaceInFlowScope(flowRequestContext)"/>
+        </transition>
+    </view-state>
+
+    <action-state id="authenticateExternalSamlPrincipal">
+        <evaluate expression="authenticateSamlCredentials"/>
+        <transition on="warn" to="warn"/>
+        <transition on="error" to="generateLoginTicket">
+            <set name="requestScope.externalAuthnFailed" value="true"/>
+        </transition>
+        <transition on="success" to="sendTicketGrantingTicket" />
+    </action-state>
+
+    <end-state id="warn" />
+    <end-state id="generateLoginTicket" />
+    <end-state id="sendTicketGrantingTicket" />
+</flow>

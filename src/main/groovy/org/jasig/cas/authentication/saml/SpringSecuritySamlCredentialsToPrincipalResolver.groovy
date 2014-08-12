@@ -2,7 +2,8 @@ package org.jasig.cas.authentication.saml
 
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver
 import org.jasig.cas.authentication.principal.Credentials
-import org.jasig.cas.service.PersonService
+import org.jasig.cas.service.IdpService
+import org.springframework.beans.factory.annotation.Autowired
 
 /**
  * {@link org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver} for {@link SpringSecuritySamlCredentials}
@@ -11,12 +12,13 @@ import org.jasig.cas.service.PersonService
  * @author Unicon, inc.
  */
 class SpringSecuritySamlCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver {
-
-    PersonService personService
+    @Autowired
+    IdpService idpService
 
     @Override
     protected String extractPrincipalId(Credentials credentials) {
-        return personService.findPersonByCredentials((SpringSecuritySamlCredentials) credentials).username
+        def p = idpService.extractPrincipalId(credentials)
+        return p
     }
 
     @Override
