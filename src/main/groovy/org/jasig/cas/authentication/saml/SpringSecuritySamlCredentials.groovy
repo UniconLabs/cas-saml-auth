@@ -2,7 +2,6 @@ package org.jasig.cas.authentication.saml
 
 import groovy.transform.EqualsAndHashCode
 import org.jasig.cas.authentication.principal.Credentials
-
 import org.springframework.security.saml.SAMLCredential
 
 /**

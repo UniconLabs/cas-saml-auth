@@ -3,9 +3,6 @@ package org.jasig.cas.authentication.saml
 import org.jasig.cas.authentication.handler.AuthenticationException
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler
 import org.jasig.cas.authentication.principal.Credentials
-import org.jasig.cas.service.PersonService
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 /**
  * {@link org.jasig.cas.authentication.handler.AuthenticationHandler} used to authenticate {@link SpringSecuritySamlCredentials}

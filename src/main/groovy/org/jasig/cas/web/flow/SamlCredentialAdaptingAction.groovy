@@ -1,7 +1,6 @@
 package org.jasig.cas.web.flow
 
 import org.jasig.cas.authentication.saml.SpringSecuritySamlCredentials
-import org.jasig.cas.service.PersonService
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.saml.SAMLCredential
 import org.springframework.webflow.execution.RequestContext
