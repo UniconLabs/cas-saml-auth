@@ -89,12 +89,12 @@ uploadArchives {
                 name "CAS SAML Authentication"
                 packaging "jar"
                 description "An Apereo CAS authentication module to allow SAML front channel authentication."
-                url "https://bitbucket.org/unicon/cas-saml-auth"
+                url "https://github.com/UniconLabs/cas-saml-auth"
 
                 scm {
-                    url "scm:git@bitbucket.org:unicon/cas-saml-auth.git"
-                    connection "scm:git@bitbucket.org:unicon/cas-saml-auth.git"
-                    developerConnection "scm:git@bitbucket.org:unicon/cas-saml-auth.git"
+                    url "scm:git@github.com:UniconLabs/cas-saml-auth.git"
+                    connection "scm:git@github.com:UniconLabs/cas-saml-auth.git"
+                    developerConnection "scm:git@github.com:UniconLabs/cas-saml-auth.git"
                 }
 
                 licenses {
