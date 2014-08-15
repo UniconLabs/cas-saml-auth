@@ -29,6 +29,7 @@ repositories {
         url "http://maven.springframework.org/milestone/"
         artifactUrls "http://maven.springframework.org/snapshot/"
     }
+    maven { url "https://raw.github.com/synergian/wagon-git/releases"}
 }
 
 dependencies {
