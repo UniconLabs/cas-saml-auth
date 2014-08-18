@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.saml.SpringSecuritySamlAuthenticationHandler
 import org.jasig.cas.authentication.saml.SpringSecuritySamlCredentialsToPrincipalResolver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 

@@ -9,7 +9,9 @@ import javax.annotation.PostConstruct
 
 class SimpleJsonIdpService implements IdpService {
     Resource idpFile
-    Set<Idp> idps = [] as Set
+    // Set<Idp> idps = [] as Set
+
+    Map<String, Idp> codeMap = [:]
 
     @PostConstruct
     void setup() {
@@ -17,13 +19,18 @@ class SimpleJsonIdpService implements IdpService {
 
         def json = new JsonSlurper().parse(idpFile.file)
         json.each { item ->
-            idps.add(new Idp(item))
+            codeMap[item.code] = new Idp(item)
         }
     }
 
     @Override
     Idp getIdp(String code) {
-        return null
+        idps.find {it.code == code}
+    }
+
+    @Override
+    Set<Idp> getIdps() {
+        return codeMap.values() as Set
     }
 
     @Override

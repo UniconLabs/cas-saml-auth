@@ -5,6 +5,9 @@
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
     <view-state id="authenticateWithIDP"
                 view="externalRedirect:contextRelative:/saml/login/alias/cas?idp=${requestScope.idpId}">
+        <on-entry>
+            <set name="requestScope.idpId" value="samlAction.getIdpIdFromCode(conversationScope.idpCode)" />
+        </on-entry>
         <on-render>
             <evaluate expression="saveFlowExecutionUrl"/>
         </on-render>

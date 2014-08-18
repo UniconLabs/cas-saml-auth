@@ -18,8 +18,6 @@ class JsonMetadataManagerManager {
     @Autowired
     IdpService idpService
 
-    Map<String, Map<String, String>> codeIdMap = [:]
-
     @PostConstruct
     def setup() {
         log.trace("setting up metadata")

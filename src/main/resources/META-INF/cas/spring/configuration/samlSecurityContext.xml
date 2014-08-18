@@ -237,7 +237,7 @@
           p:metadataManager-ref="metadata"
           p:parserPool-ref="parserPool" />
 
-    <bean id="samlAuthenticationManagerConfigurer"
-          class="org.jasig.cas.saml.AuthenticationManagerConfigurer" />
+    <bean id="samlAction"
+          class="org.jasig.cas.web.flow.SamlAction" />
 
 </beans>
