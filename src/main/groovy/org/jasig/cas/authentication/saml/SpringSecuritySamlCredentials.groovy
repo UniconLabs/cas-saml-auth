@@ -19,10 +19,11 @@ class SpringSecuritySamlCredentials implements Credentials {
         this.samlCredential = samlCredential
     }
 
+    /*
     String getSamlPrincipalId() {
-        Idp = idp
         return (this.samlCredential.getAttributeByName(this.samlGroup.externalIdAttribute) ?: this.samlCredential.attributes.find {
             it.friendlyName == this.samlGroup.externalIdAttribute
         })?.DOM?.textContent
     }
+     */
 }
