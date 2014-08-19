@@ -4,11 +4,29 @@
               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd">
     <name>samlfragment</name>
 
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/saml/*</url-pattern>
     </filter-mapping>
-    
+
+
+    <servlet>
+        <servlet-name>cas</servlet-name>
+        <servlet-class>
+            org.jasig.cas.web.init.SafeDispatcherServlet
+        </servlet-class>
+        <init-param>
+            <param-name>publishContext</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/saml/*</url-pattern>
