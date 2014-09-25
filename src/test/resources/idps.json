@@ -1,0 +1,7 @@
+[
+    {
+        "code": "SS",
+        "metadataUrl": "http://localhost:22222/idp/profile/Metadata/SAML",
+        "principalAttribute": "principal"
+    }
+]

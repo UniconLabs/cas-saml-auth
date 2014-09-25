@@ -30,15 +30,18 @@ repositories {
         artifactUrls "http://maven.springframework.org/snapshot/"
     }
     maven { url "https://raw.github.com/synergian/wagon-git/releases"}
+    maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
 }
 
 dependencies {
     compile "org.codehaus.groovy:groovy-all:${project."groovy.version"}"
     compile "org.springframework.security.extensions:spring-security-saml2-core:${project."spring-security-saml.version"}"
-    compile "org.springframework.security:spring-security-cas:${project."spring-security.version"}"
+    compile "org.opensaml:opensaml:${project."opensaml.version"}"
 
     provided "org.jasig.cas:cas-server-core:${project."cas.version"}"
     provided "javax.servlet:servlet-api:2.5"
+
+    testCompile "org.spockframework:spock-core:${project."spock.version"}"
 
     deployerJar "ar.com.synergian:wagon-git:0.2.0"
 }

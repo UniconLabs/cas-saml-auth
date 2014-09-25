@@ -3,13 +3,22 @@ package org.jasig.cas.service
 import groovy.json.JsonSlurper
 import org.jasig.cas.authentication.saml.SpringSecuritySamlCredentials
 import org.jasig.cas.domain.Idp
+import org.opensaml.saml2.metadata.EntityDescriptor
+import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider
+import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider
+import org.opensaml.xml.parse.BasicParserPool
+import org.opensaml.xml.parse.ParserPool
+import org.opensaml.xml.parse.StaticBasicParserPool
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.Resource
 
 import javax.annotation.PostConstruct
 
 class SimpleJsonIdpService implements IdpService {
     Resource idpFile
-    // Set<Idp> idps = [] as Set
+
+    @Autowired(required = false)
+    ParserPool parserPool
 
     Map<String, Idp> codeMap = [:]
 
@@ -17,9 +26,21 @@ class SimpleJsonIdpService implements IdpService {
     void setup() {
         assert idpFile, "idpFile cannot be null"
 
+        if (!parserPool) {
+            parserPool = new BasicParserPool()
+            parserPool.namespaceAware = true
+        }
+
         def json = new JsonSlurper().parse(idpFile.file)
         json.each { item ->
-            codeMap[item.code] = new Idp(item)
+            def idp = new Idp(item)
+            if (!idp.entityId) {
+                def metadataUrl = new URL(idp.metadataUrl)
+                def e = metadataUrl.getText()
+                def entityId = parserPool.parse(metadataUrl.openStream()).documentElement.getAttribute("entityID")
+                idp.entityId = entityId
+            }
+            codeMap[item.code] = idp
         }
     }
 
@@ -35,7 +56,7 @@ class SimpleJsonIdpService implements IdpService {
 
     @Override
     Idp getIdpByEntityId(String entityId) {
-        idps.find {it.entityId = entityId}
+        idps.find {it.entityId == entityId}
     }
 
     @Override
@@ -45,6 +66,6 @@ class SimpleJsonIdpService implements IdpService {
         def idAttribute = idp.principalAttribute ?: "principal"
         return (samlCredential.getAttribute(idAttribute) ?: samlCredential.attributes.find {
             it.friendlyName == idAttribute
-        })?.DOM?.textContent
+        })?.DOM?.textContent.trim()
     }
 }
