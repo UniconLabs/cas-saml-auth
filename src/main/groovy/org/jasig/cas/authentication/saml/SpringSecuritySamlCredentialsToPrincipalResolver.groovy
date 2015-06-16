@@ -2,6 +2,9 @@ package org.jasig.cas.authentication.saml
 
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver
 import org.jasig.cas.authentication.principal.Credentials
+import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver
+import org.jasig.cas.authentication.principal.Principal
+import org.jasig.cas.authentication.principal.SimplePrincipal
 import org.jasig.cas.service.IdpService
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -11,14 +14,21 @@ import org.springframework.beans.factory.annotation.Autowired
  * @author Dmitriy Kopylenko
  * @author Unicon, inc.
  */
-class SpringSecuritySamlCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver {
+class SpringSecuritySamlCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
     @Autowired
     IdpService idpService
 
     @Override
-    protected String extractPrincipalId(Credentials credentials) {
+    Principal resolvePrincipal(Credentials credentials) {
         def p = idpService.extractPrincipalId(credentials)
-        return p
+        if (!p) {
+            return null
+        }
+
+        def attributes = ((SpringSecuritySamlCredentials)credentials).samlCredential.attributes.collectEntries {
+            [(it.friendlyName ?: it.name): (it.attributeValues.size() == 1? it.attributeValues.get(0).DOM?.textContent.trim() : it.attributeValues.collect {it.DOM?.textContent.trim()})]
+        }
+        return new SimplePrincipal(p, attributes)
     }
 
     @Override
