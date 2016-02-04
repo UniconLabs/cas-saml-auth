@@ -30,7 +30,7 @@ import javax.servlet.http.HttpSession
 class LoginFlowResumingController {
     private static final String IDP_AUTHN_FINISHED_EVENT_ID_URL_PARAM = "&_eventId=idpAuthnFinished";
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, produces = "text/html; charset=UTF-8")
     public void resumeLoginFlow(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         /*
         request.setAttribute(FlowExecutionUrlSavingAction.BASE_FLOW_EXECUTION_KEY, session.getAttribute(FlowExecutionUrlSavingAction.BASE_FLOW_EXECUTION_KEY))
