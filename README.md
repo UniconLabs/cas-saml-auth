@@ -50,7 +50,7 @@ The following resolver to the deployerConfigContext.xml:
 This handler:
 
 ```
-<bean class="org.jasig.cas.authentication.saml.SpringSecuritySamlCredentialsToPrincipalResolver" />
+<bean class="org.jasig.cas.authentication.saml.SpringSecuritySamlAuthenticationHandler" />
 ```
 
 And the following snippet, all in the deployerConfigContext.xml file:
@@ -72,16 +72,33 @@ In the web.xml, adjust:
             /WEB-INF/deployerConfigContext.xml
         </param-value>
     </context-param>
+    
 ```
 
 And in the same file, add the filter mapping:
 
 ```
     <!-- SAML front channel -->
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/saml/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/idpAuthnFinishedCallback</url-pattern>
+    </servlet-mapping>
+    
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/saml/*</url-pattern>
     </filter-mapping>
+
     <!-- end SAML front channel -->
 ```
 
