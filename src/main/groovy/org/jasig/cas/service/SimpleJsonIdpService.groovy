@@ -65,7 +65,7 @@ class SimpleJsonIdpService implements IdpService {
         def idp = getIdpByEntityId(samlCredential.remoteEntityID)
         def idAttribute = idp.principalAttribute ?: "principal"
         return (samlCredential.getAttribute(idAttribute) ?: samlCredential.attributes.find {
-            it.friendlyName == idAttribute
+            it.friendlyName == idAttribute || it.name == idAttribute
         })?.DOM?.textContent.trim()
     }
 }
