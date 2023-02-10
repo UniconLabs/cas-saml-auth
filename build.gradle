@@ -1,126 +1,18 @@
 apply plugin: 'groovy'
-apply plugin: 'maven'
-apply plugin: 'signing'
-apply from: 'http://tellurianring.com/projects/gradle-plugins/gradle-release/apply.groovy'
-
-buildscript {
-    repositories {
-        maven { url 'http://repo.spring.io/plugins-release' }
-    }
-    dependencies {
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
-    }
-}
-
-configurations {
-    deployerJar
-}
-
-configure(allprojects) {
-    apply plugin: 'propdeps'
-    apply plugin: 'propdeps-maven'
-    apply plugin: 'propdeps-idea'
-    apply plugin: 'propdeps-eclipse'
-}
 
 repositories {
-    // Need this for javax.xml:xmldsig
     mavenLocal()
     mavenCentral()
-    jcenter()
-    maven {
-        url "http://maven.springframework.org/milestone/"
-        artifactUrls "http://maven.springframework.org/snapshot/"
-    }
-    maven { url "https://raw.github.com/synergian/wagon-git/releases"}
-    maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-    maven { url "https://build.shibboleth.net/nexus/content/groups/public"}
 }
 
 dependencies {
-    compile "org.codehaus.groovy:groovy-all:${project."groovy.version"}"
-    compile "org.springframework.security.extensions:spring-security-saml2-core:${project."spring-security-saml.version"}"
-    compile "org.opensaml:opensaml:${project."opensaml.version"}"
+    implementation "org.codehaus.groovy:groovy-all:${project."groovy.version"}"
+    implementation "org.springframework.security.extensions:spring-security-saml2-core:${project."spring-security-saml.version"}"
+    implementation "org.opensaml:opensaml:${project."opensaml.version"}"
 
-    provided "org.jasig.cas:cas-server-core:${project."cas.version"}"
-    provided "javax.servlet:servlet-api:2.5"
+    implementation("org.springframework.webflow:spring-webflow:${project."webflow.version"}")
+    implementation("org.springframework.webflow:spring-binding:${project."webflow.version"}")
 
-    testCompile "org.spockframework:spock-core:${project."spock.version"}"
-
-    deployerJar "ar.com.synergian:wagon-git:0.2.0"
+    compileOnly "org.jasig.cas:cas-server-core:${project."cas.version"}"
+    compileOnly "javax.servlet:servlet-api:2.5"
 }
-
-javadoc {
-    classpath = configurations.compile + configurations.provided
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc"
-    from 'build/docs/javadoc'
-}
-
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier = "sources"
-}
-
-artifacts {
-    archives jar
-    archives javadocJar
-    archives sourcesJar
-}
-
-signing {
-    required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = "2.0"
-}
-
-
-createReleaseTag.dependsOn uploadArchives
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment)}
-            configuration = configurations.deployerJar
-            repository(url: "https://api.bintray.com/maven/uniconiam/maven/cas-saml-auth") {
-                authentication(userName: bintrayUsername, password: bintrayAPIKey)
-            }
-            snapshotRepository(url: "git:snapshots://git@bitbucket.org:scalding/maven-repo.git") {
-                authentication(userName: githubUsername, password: githubPassword)
-            }
-            pom.project {
-                name "CAS SAML Authentication"
-                packaging "jar"
-                description "An Apereo CAS authentication module to allow SAML front channel authentication."
-                url "https://github.com/UniconLabs/cas-saml-auth"
-
-                scm {
-                    url "scm:git@github.com:UniconLabs/cas-saml-auth.git"
-                    connection "scm:git@github.com:UniconLabs/cas-saml-auth.git"
-                    developerConnection "scm:git@github.com:UniconLabs/cas-saml-auth.git"
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'scalding'
-                        name 'Jonathan Johnson'
-                    }
-                }
-            }
-        }
-    }
-}
-
