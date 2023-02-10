@@ -8,12 +8,12 @@ Add the following dependencies:
         <dependency>
             <groupId>org.apereo.cas</groupId>
             <artifactId>cas-saml-auth</artifactId>
-            <version>1.0-M6</version>
+            <version>1.0-M8</version>
         </dependency>
         <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
-            <version>2.5.3</version>
+            <version>2.6.4</version>
         </dependency>
 ```
 
